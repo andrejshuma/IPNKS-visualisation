@@ -2,8 +2,8 @@ import React, { useEffect, useRef } from "react";
 import Sigma from "sigma";
 import Graph from "graphology";
 import { circular } from "graphology-layout";
-import jsonData from "../../assets/demoData.json";
-import colors from "../../assets/colors.json";
+import jsonData from "../assets/demoData.json";
+import colors from "../assets/colors.json";
 
 export default function GraphViewMentors() {
     const containerRef = useRef(null);
@@ -64,7 +64,7 @@ export default function GraphViewMentors() {
     return (
         <div
             ref={containerRef}
-            style={{ width: "800px", height: "600px", border: "1px solid #ccc" }}
+            style={{ width: "100%", height: "100%", border: "none" }}
         />
     );
 }

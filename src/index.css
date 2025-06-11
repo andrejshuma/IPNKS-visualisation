@@ -10,6 +10,10 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+input {
+  margin: 0;
+}
+
 #root {
   height: 100vh;
   width: 100vw;

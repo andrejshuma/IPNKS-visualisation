@@ -3,7 +3,7 @@ import "./App.css";
 import Navigation from "./components/Navigation";
 import Sidebar from "./components/Sidebar";
 import GraphNavbar from "./components/GraphNavbar";
-import GraphView from "./components/GraphView";
+import GraphViewMentors from "./components/GraphViewMentors.jsx";
 
 function App() {
   const [selectedNode, setSelectedNode] = useState(null);
@@ -17,12 +17,8 @@ function App() {
       <Navigation />
       <div className="app-body">
         <main className="main-content">
-          <div className="graph-container">
-            <GraphNavbar />
-            <div className="graph-view-container">
-              <GraphView onNodeClick={handleNodeClick} />
-            </div>
-          </div>
+          <GraphNavbar />
+          <GraphViewMentors />
         </main>
         <Sidebar selectedNode={selectedNode} />
       </div>

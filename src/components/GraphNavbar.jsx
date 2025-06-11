@@ -1,5 +1,6 @@
 import React from "react";
 import "./GraphNavbar.css";
+import jsonData from "../assets/demoData.json"
 
 const GraphNavbar = () => {
   return (
@@ -28,9 +29,8 @@ const GraphNavbar = () => {
       <div className="navbar-section">
         <h4>Statistics</h4>
         <div className="stats-inline">
-          <span className="stat-item">Nodes: 15</span>
-          <span className="stat-item">Edges: 8</span>
-          <span className="stat-item">Density: 0.45</span>
+          <span className="stat-item">Nodes: {jsonData.length}</span>
+          <span className="stat-item">Edges: {jsonData.length * (jsonData.length) / 2}</span>
         </div>
       </div>
     </div>
