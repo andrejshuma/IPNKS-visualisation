@@ -1,0 +1,141 @@
+.graph-navbar {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  padding: 0.75rem 2rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-height: 50px;
+}
+
+.navbar-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.navbar-section h4 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #495057;
+  font-weight: 600;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  text-align: center;
+}
+
+.control-group label {
+  font-size: 0.8rem;
+  color: #6c757d;
+  white-space: nowrap;
+  margin: 0;
+  text-align: center;
+}
+
+.control-group input[type="range"] {
+  width: 60px;
+}
+
+.control-btn {
+  padding: 0.3rem 0.6rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  min-width: 60px;
+  margin: 0 0.1rem;
+}
+
+.control-btn:hover {
+  background-color: #0056b3;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.filter-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: #495057;
+  cursor: pointer;
+  margin: 0;
+}
+
+.filter-checkbox input[type="checkbox"] {
+  margin: 0;
+}
+
+.filter-checkbox span {
+  white-space: nowrap;
+}
+
+.stats-inline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stat-item {
+  font-size: 0.8rem;
+  color: #495057;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  .graph-navbar {
+    gap: 1rem;
+  }
+  
+  .stats-inline {
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .graph-navbar {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .navbar-section {
+    flex-wrap: wrap;
+  }
+  
+  .filter-group {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .stats-inline {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
