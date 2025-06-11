@@ -7,49 +7,48 @@ import colors from "../../assets/colors.json";
 
 export default function GraphViewMentors() {
     const containerRef = useRef(null);
+    const nodeSize = 12;
 
     useEffect(() => {
         const graph = new Graph();
         const edgeCount = {};
+        const nodeInteractionCount = {};
 
-        jsonData.forEach((data, index) => {
+        jsonData.forEach(data => {
             const mentor = data.mentor;
-            const members = [data.member1, data.member2];
-            let color = colors[index % colors.length];
+            const nodes = [data.member1, data.member2];
 
-            if (!graph.hasNode(mentor)) {
-                graph.addNode(mentor, {
-                    label: mentor,
-                    size: 20,
-                    color: color,
-                });
-            }
+            nodes.forEach((member) => {
+                const key = [mentor, member].sort().join("-");
 
-            members.forEach((member) => {
-                if (!graph.hasNode(member)) {
-                    graph.addNode(member, {
-                        label: member,
-                        size: 5,
-                        color: "#222222",
-                    });
-                }
-
-                const key = `${mentor}-${member}`;
                 edgeCount[key] = (edgeCount[key] || 0) + 1;
+
+                nodeInteractionCount[mentor] = (nodeInteractionCount[mentor] || 0) + 1;
+                nodeInteractionCount[member] = (nodeInteractionCount[member] || 0) + 1;
+            });
+        });
+
+        Object.keys(nodeInteractionCount).forEach((person, index) => {
+            const color = colors[index % colors.length];
+            graph.addNode(person, {
+                label: person,
+                size: nodeInteractionCount[person] + 10,    // CHANGE IN PROD
+                color: color,
             });
         });
 
         Object.entries(edgeCount).forEach(([key, count]) => {
-            const [mentor, member] = key.split("-");
-
-            graph.addEdge(mentor, member, {
-                size: Math.max(1, count),
-                label: `${count} connections`,
-            });
+            const [node1, node2] = key.split("-");
+            if (!graph.hasEdge(node1, node2) && !graph.hasEdge(node2, node1)) {
+                graph.addUndirectedEdgeWithKey(key, node1, node2, {
+                    size: Math.max(1, count),
+                    label: `${count} interactions`,
+                });
+            }
         });
 
-        // circular.assign(graph);
-        graph.forEachNode((node, attributes) => {
+        // Scatter layout
+        graph.forEachNode((node) => {
             graph.setNodeAttribute(node, "x", Math.random() * 1000);
             graph.setNodeAttribute(node, "y", Math.random() * 1000);
         });
@@ -59,6 +58,7 @@ export default function GraphViewMentors() {
             renderer.kill();
         };
     }, []);
+
 
 
     return (
