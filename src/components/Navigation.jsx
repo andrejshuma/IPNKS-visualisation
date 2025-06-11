@@ -1,25 +1,16 @@
 import React from "react";
 import "./Navigation.css";
+import finkiLogo from "../assets/finki_mk.png"; // Adjust the path as necessary
 
 const Navigation = () => {
   return (
     <nav className="navigation">
       <div className="nav-brand">
-        <h2>IPNKS Visualisation</h2>
-      </div>
-      <div className="nav-links">
-        <a href="#" className="nav-link">
-          Dashboard
-        </a>
-        <a href="#" className="nav-link">
-          Analysis
-        </a>
-        <a href="#" className="nav-link">
-          Settings
-        </a>
-        <a href="#" className="nav-link">
-          Help
-        </a>
+        <img
+          src={finkiLogo}
+          alt="Brand Logo"
+          style={{ height: "auto", width: "18rem" }}
+        />
       </div>
     </nav>
   );
