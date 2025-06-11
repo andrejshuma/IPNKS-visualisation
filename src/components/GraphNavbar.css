@@ -1,12 +1,12 @@
 .graph-navbar {
+  display: flex;
+  flex-direction: column;
   background-color: #f8f9fa;
   border-bottom: 1px solid #dee2e6;
   padding: 1.5rem 2.5rem;
-  display: flex;
-  gap: 3rem;
+  gap: 1rem;
   align-items: center;
   justify-content: center;
-  flex-wrap: nowrap;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   min-height: 70px;
 }
@@ -52,7 +52,7 @@
 
 .control-btn {
   padding: 0.6rem 1.2rem;
-  background-color: #007bff;
+  background-color: #aaa;
   color: white;
   border: none;
   border-radius: 4px;
@@ -64,8 +64,12 @@
   margin: 0 0.25rem;
 }
 
+.control-btn-active {
+  background: #007bff;
+}
+
 .control-btn:hover {
-  background-color: #0056b3;
+  opacity: .8;
 }
 
 .filter-group {
@@ -119,6 +123,16 @@
 
 .search-input {
   width: 200px;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  border: 2px solid #dee2e6;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.search-input-number {
+  width: 100px;
   padding: 0.5rem 0.75rem;
   font-size: 1rem;
   border: 2px solid #dee2e6;
@@ -202,6 +216,7 @@
     font-size: 0.95rem;
     padding: 0.5rem 1rem;
   }
+
   
   .navbar-section h4 {
     font-size: 1.1rem;

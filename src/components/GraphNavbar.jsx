@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import "./GraphNavbar.css";
 import jsonData from "../assets/demoData.json"
 import {useGlobalContext} from "../GlobalProvider.jsx";
@@ -46,7 +46,7 @@ const GraphNavbar = () => {
     };
 
     jsonData.forEach(data => {
-        const { mentor, member1, member2 } = data;
+        const {mentor, member1, member2} = data;
         uniquePeople.add(mentor);
         uniquePeople.add(member1);
         uniquePeople.add(member2);
@@ -63,59 +63,70 @@ const GraphNavbar = () => {
     });
 
     return (
-    <div className="graph-navbar">
-      <div className="navbar-section">
-        <div className="search-container">
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Search mentors..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-            onFocus={() => searchTerm.length > 0 && setShowSuggestions(true)}
-            onBlur={handleSearchBlur}
-          />
-          {showSuggestions && filteredMentors.length > 0 && (
-            <div className="suggestions-dropdown">
-              {filteredMentors.slice(0, 5).map((mentor, index) => (
-                <div
-                  key={index}
-                  className="suggestion-item"
-                  onClick={() => handleSuggestionClick(mentor)}
-                >
-                  {mentor}
+        <div className="graph-navbar">
+            <div className="navbar-section">
+                <div style={{display: "flex", alignItems: "center", gap: ".4rem"}}>
+                    <label className="search-label">Search Mentor:</label>
+                    <div className="search-container">
+                        <input
+                            type="text"
+                            className="search-input"
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                            onFocus={() => searchTerm.length > 0 && setShowSuggestions(true)}
+                            onBlur={handleSearchBlur}
+                        />
+                        {showSuggestions && filteredMentors.length > 0 && (
+                            <div className="suggestions-dropdown">
+                                {filteredMentors.slice(0, 5).map((mentor, index) => (
+                                    <div
+                                        key={index}
+                                        className="suggestion-item"
+                                        onClick={() => handleSuggestionClick(mentor)}
+                                    >
+                                        {mentor}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
-              ))}
+                <div style={{display: "flex", alignItems: "center", gap: ".4rem"}}>
+                    <label className="search-label">Min Collab:</label>
+                    <input
+                        type="number"
+                        className="search-input-number"
+                    />
+                </div>
+                <div style={{display: "flex", alignItems: "center", gap: ".4rem"}}>
+                    <label className="search-label">Max Collab:</label>
+                    <input
+                        type="number"
+                        className="search-input-number"
+                    />
+                </div>
+                <button className={`control-btn ${selectedGraphLayout === "circular" ? "control-btn-active" : ""}`} onClick={() => setSelectedGraphLayout("circular")}>Circular</button>
+                <button className={`control-btn ${selectedGraphLayout === "random" ? "control-btn-active" : ""}`} onClick={() => setSelectedGraphLayout("random")}>Random</button>
             </div>
-          )}
-        </div>
-      </div>
 
-      <div className="navbar-section">
-        <h4>Layout</h4>
-        <div className="control-group">
-          <label>Node Size:</label>
-          <input type="range" min="0" max="10" value={nodeAddSize} onChange={(e) => setNodeAddSize(Number(e.target.value))}/>
-        </div>
-        <div className="control-group">
-          <label>Edge Thickness:</label>
-          <input type="range" min="1" max="5" value={edgeAddSize} onChange={(e) => setEdgeAddSize(Number(e.target.value))}/>
-        </div>
-        <div className="control-group">
-          <button className="control-btn" onClick={() => setSelectedGraphLayout("circular")}>Circular</button>
-          <button className="control-btn" onClick={() => setSelectedGraphLayout("random")}>Random</button>
-        </div>
-      </div>
+            <div className="navbar-section">
+                <div className="control-group">
+                    <label>Node Size:</label>
+                    <input type="range" min="0" max="10" value={nodeAddSize}
+                           onChange={(e) => setNodeAddSize(Number(e.target.value))}/>
+                </div>
+                    <div className="control-group">
+                        <label>Edge Thickness:</label>
+                        <input type="range" min="1" max="5" value={edgeAddSize}
+                               onChange={(e) => setEdgeAddSize(Number(e.target.value))}/>
+                    </div>
+                    <div className="stats-inline">
+                        <span className="stat-item">Членови: {uniquePeople.size}</span>
+                        <span className="stat-item">Соработки: {edgeCount.size}</span>
+                    </div>
+                </div>
+            </div>
+            );
+            };
 
-      <div className="navbar-section">
-        <h4>Statistics</h4>
-        <div className="stats-inline">
-          <span className="stat-item">Nodes: {uniquePeople.size}</span>
-          <span className="stat-item">Edges: {edgeCount.size}</span>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default GraphNavbar;
+            export default GraphNavbar;
