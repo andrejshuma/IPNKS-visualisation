@@ -6,12 +6,6 @@ import GraphNavbar from "./components/GraphNavbar";
 import GraphViewMentors from "./components/GraphViewMentors.jsx";
 
 function App() {
-  const [selectedNode, setSelectedNode] = useState(null);
-
-  const handleNodeClick = (node) => {
-    setSelectedNode(node);
-  };
-
   return (
     <div className="app">
       <Navigation />
@@ -20,7 +14,7 @@ function App() {
           <GraphNavbar />
           <GraphViewMentors />
         </main>
-        <Sidebar selectedNode={selectedNode} />
+        <Sidebar />
       </div>
     </div>
   );

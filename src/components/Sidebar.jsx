@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import "./Sidebar.css";
+import { useGlobalContext } from "../GlobalProvider.jsx";
 
-const Sidebar = ({ selectedNode = null }) => {
+const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { selectedNode, selectedNodeDetails } = useGlobalContext();
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -14,94 +16,71 @@ const Sidebar = ({ selectedNode = null }) => {
         <button className="toggle-btn" onClick={toggleSidebar}>
           {isCollapsed ? "→" : "←"}
         </button>
-        {!isCollapsed && <h3>Node Details</h3>}
+        {!isCollapsed && (
+          <h3>
+            {selectedNodeDetails ? selectedNodeDetails.name : "Node Details"}
+          </h3>
+        )}
       </div>
 
       {!isCollapsed && (
         <div className="sidebar-content">
-          {selectedNode ? (
+          {selectedNodeDetails ? (
             <>
               <div className="sidebar-section">
-                <h4>Basic Information</h4>
+                <h4>Информации за професор</h4>
                 <div className="info-item">
-                  <span className="info-label">Name:</span>
+                  <span className="info-label">Име:</span>
+                  <span className="info-value">{selectedNodeDetails.name}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Соработувал со:</span>
                   <span className="info-value">
-                    {selectedNode.label || "Unknown"}
+                    {selectedNodeDetails.totalCollaborations} колеги
                   </span>
                 </div>
                 <div className="info-item">
-                  <span className="info-label">Type:</span>
+                  <span className="info-label">Менторства:</span>
                   <span className="info-value">
-                    {selectedNode.type || "Unknown"}
-                  </span>
-                </div>
-                <div className="info-item">
-                  <span className="info-label">ID:</span>
-                  <span className="info-value">{selectedNode.id || "N/A"}</span>
-                </div>
-              </div>
-
-              <div className="sidebar-section">
-                <h4>Graph Properties</h4>
-                <div className="info-item">
-                  <span className="info-label">Degree:</span>
-                  <span className="info-value">{selectedNode.degree || 0}</span>
-                </div>
-                <div className="info-item">
-                  <span className="info-label">Size:</span>
-                  <span className="info-value">{selectedNode.size || 10}</span>
-                </div>
-                <div className="info-item">
-                  <span className="info-label">Color:</span>
-                  <span className="info-value">
-                    <span
-                      className="color-indicator"
-                      style={{ backgroundColor: selectedNode.color || "#000" }}
-                    ></span>
-                    {selectedNode.color || "#000000"}
+                    {selectedNodeDetails.mentorCount}
                   </span>
                 </div>
               </div>
 
               <div className="sidebar-section">
-                <h4>Academic Details</h4>
-                <div className="info-item">
-                  <span className="info-label">Institution:</span>
-                  <span className="info-value">
-                    {selectedNode.institution || "Not specified"}
-                  </span>
-                </div>
-                <div className="info-item">
-                  <span className="info-label">Department:</span>
-                  <span className="info-value">
-                    {selectedNode.department || "Not specified"}
-                  </span>
-                </div>
-                <div className="info-item">
-                  <span className="info-label">Role:</span>
-                  <span className="info-value">
-                    {selectedNode.role || "Not specified"}
-                  </span>
-                </div>
-              </div>
-
-              <div className="sidebar-section">
-                <h4>Connections</h4>
-                <div className="connections-list">
-                  {selectedNode.connections &&
-                  selectedNode.connections.length > 0 ? (
-                    selectedNode.connections.map((connection, index) => (
-                      <div key={index} className="connection-item">
-                        <span className="connection-name">
-                          {connection.name}
-                        </span>
-                        <span className="connection-type">
-                          {connection.type}
-                        </span>
-                      </div>
-                    ))
+                <h4>Членови во комисија (како ментор)</h4>
+                <div className="dropdown-list">
+                  {selectedNodeDetails.mentorCollaborations.length > 0 ? (
+                    <select className="collaboration-dropdown" size="5">
+                      {selectedNodeDetails.mentorCollaborations.map(
+                        (member, index) => (
+                          <option key={index} value={member}>
+                            {member}
+                          </option>
+                        )
+                      )}
+                    </select>
                   ) : (
-                    <p className="no-connections">No connections available</p>
+                    <p className="no-data">Нема податоци за менторства</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="sidebar-section">
+                <h4>Ментори (како член)</h4>
+                <div className="dropdown-list">
+                  {selectedNodeDetails.memberCollaborations.length > 0 ? (
+                    <select className="collaboration-dropdown" size="5">
+                      {selectedNodeDetails.memberCollaborations.map(
+                        (mentor, index) => (
+                          <option key={index} value={mentor}>
+                            {mentor}
+                          </option>
+                        )
+                      )}
+                    </select>
+                  ) : (
+                    <p className="no-data">Нема податоци за членства</p>
                   )}
                 </div>
               </div>
@@ -109,10 +88,9 @@ const Sidebar = ({ selectedNode = null }) => {
           ) : (
             <div className="no-selection">
               <div className="placeholder-content">
-                <h4>No Node Selected</h4>
+                <h4>Нема селектиран јазол</h4>
                 <p>
-                  Click on a node in the graph to view its details and
-                  properties.
+                  Кликнете на јазол во графикот за да видите детални информации.
                 </p>
                 <div className="placeholder-icon">📊</div>
               </div>
