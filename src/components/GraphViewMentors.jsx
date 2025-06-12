@@ -5,6 +5,7 @@ import { circular } from "graphology-layout";
 import jsonData from "../assets/diplomas.json";
 import colors from "../assets/colors.json";
 import { useGlobalContext } from "../GlobalProvider.jsx";
+import forceAtlas2 from 'graphology-layout-forceatlas2';
 
 export default function GraphViewMentors() {
     const graphRef = useRef(null);
@@ -31,7 +32,7 @@ export default function GraphViewMentors() {
         });
 
         Object.keys(nodeMentorCount).forEach((mentor, i) => {
-            const baseSize = Math.log(nodeMentorCount[mentor]) + 10;
+            const baseSize = Math.log(nodeMentorCount[mentor]) + 5;
             graph.addNode(mentor, {
                 label: mentor,
                 baseSize,
@@ -42,15 +43,16 @@ export default function GraphViewMentors() {
 
         Object.entries(edgeCount).forEach(([key, count]) => {
             const [node1, node2] = key.split("-");
-            const size = Math.log(count) + 1;
+            const size = Math.log(count);
 
             [node1, node2].forEach(node => {
                 if (!graph.hasNode(node)) {
                     graph.addNode(node, {
                         label: node,
-                        baseSize: 10,
-                        size: 10,
-                        color: "#FF0000",
+                        isCommissionOnly: true,
+                        baseSize: 5,
+                        size: 5,
+                        color: "#3CB3AA",
                     });
                 }
             });
@@ -61,7 +63,20 @@ export default function GraphViewMentors() {
                     baseSize: size,
                     size,
                     hidden: true,
+                    color: "#ccc"
                 });
+            }
+        });
+
+        const {maxDegree, degrees} = findMaxDegreeNode(graph)
+
+        graph.forEachNode((node) => {
+            const degree = degrees[node];
+            const intensity = degree / maxDegree;
+            const color = interpolateColor("#2993D1", "#2C3E50", intensity);
+            const isCommissionOnly = graph.getNodeAttribute(node, "isCommissionOnly");
+            if (!isCommissionOnly) {
+                graph.setNodeAttribute(node, "color", color);
             }
         });
 
@@ -69,7 +84,7 @@ export default function GraphViewMentors() {
 
         graphRef.current = graph;
         rendererRef.current = new Sigma(graph, containerRef.current, {
-            labelRenderedSizeThreshold: Infinity, // Enable all labels regardless of zoom
+            labelRenderedSizeThreshold: 0,
             nodeReducer: (node, data) => {
                 if (!hoveredNode.current) {
                     return {
@@ -79,18 +94,19 @@ export default function GraphViewMentors() {
                 }
 
                 const neighbors = new Set(graph.neighbors(hoveredNode.current));
+
                 return {
                     ...data,
-                    label: data.label, // Show all labels on hover
+                    label: node === hoveredNode.current || neighbors.has(node) ? data.label : "",
                     color:
                         node === hoveredNode.current || neighbors.has(node)
                             ? data.color
-                            : "#CCC", // Dim unrelated nodes
+                            : "#eee", // Dim unrelated nodes
                     zIndex: node === hoveredNode.current ? 2 : 1,
                 };
             },
             edgeReducer: (edge, data) => {
-                if (!hoveredNode.current) return { ...data, hidden: true }; // Hide all edges by default
+                if (!hoveredNode.current) return { ...data, hidden: true };
 
                 const [source, target] = graph.extremities(edge);
                 const isConnected =
@@ -154,27 +170,74 @@ export default function GraphViewMentors() {
     return <div ref={containerRef} style={{ width: "100%", height: "100%" }} />;
 }
 
+function findMaxDegreeNode(graph) {
+    const degrees = {};
+    let maxDegree = 0;
+
+    graph.forEachNode((node) => {
+        const degree = graph.degree(node);
+        degrees[node] = degree;
+        if (degree > maxDegree) maxDegree = degree;
+    });
+
+    return {maxDegree, degrees};
+
+}
+
+function interpolateColor(lightHex, darkHex, t) {
+    const hexToRgb = (hex) => hex.match(/\w\w/g).map(x => parseInt(x, 16));
+    const rgbToHex = (r, g, b) =>
+        "#" + [r, g, b].map(x => x.toString(16).padStart(2, "0")).join("");
+
+    const [r1, g1, b1] = hexToRgb(lightHex);
+    const [r2, g2, b2] = hexToRgb(darkHex);
+
+    const r = Math.round(r1 + (r2 - r1) * t);
+    const g = Math.round(g1 + (g2 - g1) * t);
+    const b = Math.round(b1 + (b2 - b1) * t);
+
+    return rgbToHex(r, g, b);
+}
+
 function applyLayout(graph, layoutType) {
-    if (layoutType === "circular") {
-        circular.assign(graph);
-    } else if (layoutType === "random") {
-        const positions = [];
+    circular.assign(graph);
+
+    const radiusX = 2000; // wider horizontally
+    const radiusY = 1000;  // shorter vertically
+
+    graph.forEachNode((node, attrs) => {
+        graph.setNodeAttribute(node, "x", attrs.x * radiusX);
+        graph.setNodeAttribute(node, "y", attrs.y * radiusY);
+    });
+
+    if (layoutType === "random") {
+        // Initialize positions randomly in [0,1]
         graph.forEachNode((node) => {
-            let x, y, tries = 0;
-            do {
-                x = Math.random() * 1000;
-                y = Math.random() * 1000;
-                tries++;
-            } while (
-                positions.some(pos => {
-                    const dx = pos.x - x;
-                    const dy = pos.y - y;
-                    return Math.sqrt(dx * dx + dy * dy) < 100;
-                }) && tries < 100
-                );
-            positions.push({ x, y });
-            graph.setNodeAttribute(node, "x", x);
-            graph.setNodeAttribute(node, "y", y);
+            graph.setNodeAttribute(node, "x", Math.random());
+            graph.setNodeAttribute(node, "y", Math.random());
+        });
+
+        // Run ForceAtlas2
+        forceAtlas2.assign(graph, {
+            iterations: 200,
+            settings: {
+                gravity: 0.1,
+                scalingRatio: 50,
+                outboundAttractionDistribution: true,
+                barnesHutOptimize: true,
+            },
+        });
+
+        // Stretch the layout to a rectangle after ForceAtlas2 finishes
+        const widthFactor = 5;  // Stretch horizontally by 3x
+        const heightFactor = 2; // Keep height as is (or compress by <1)
+
+        graph.forEachNode((node, attrs) => {
+            const newX = attrs.x * widthFactor;
+            const newY = attrs.y * heightFactor;
+            graph.setNodeAttribute(node, "x", newX);
+            graph.setNodeAttribute(node, "y", newY);
         });
     }
 }
+

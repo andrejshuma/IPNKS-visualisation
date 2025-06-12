@@ -112,12 +112,12 @@ const GraphNavbar = () => {
             <div className="navbar-section">
                 <div className="control-group">
                     <label>Node Size:</label>
-                    <input type="range" min="0" max="10" value={nodeAddSize}
+                    <input type="range" min="0" max="5" value={nodeAddSize}
                            onChange={(e) => setNodeAddSize(Number(e.target.value))}/>
                 </div>
                     <div className="control-group">
                         <label>Edge Thickness:</label>
-                        <input type="range" min="1" max="5" value={edgeAddSize}
+                        <input type="range" min="1" max="3" value={edgeAddSize}
                                onChange={(e) => setEdgeAddSize(Number(e.target.value))}/>
                     </div>
                     <div className="stats-inline">
