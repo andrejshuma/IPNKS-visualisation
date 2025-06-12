@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import "./GraphNavbar.css";
-import jsonData from "../assets/demoData.json"
+import jsonData from "../assets/diplomas.json"
 import {useGlobalContext} from "../GlobalProvider.jsx";
 import {node} from "globals";
 
@@ -19,7 +19,7 @@ const GraphNavbar = () => {
         ...new Set(
             [
                 ...jsonData.map((item) => item.mentor),
-                ...jsonData.map((item) => item.member),
+                ...jsonData.map((item) => item.member1),
                 ...jsonData.map((item) => item.member2),
             ].filter(Boolean)
         ),
@@ -122,7 +122,7 @@ const GraphNavbar = () => {
                     </div>
                     <div className="stats-inline">
                         <span className="stat-item">Членови: {uniquePeople.size}</span>
-                        <span className="stat-item">Соработки: {edgeCount.size}</span>
+                        <span className="stat-item">Соработки: {jsonData.length * 2}</span>
                     </div>
                 </div>
             </div>
