@@ -5,6 +5,7 @@ const GlobalContext = createContext();
 export const GlobalProvider = ({ children }) => {
   const [selectedNode, setSelectedNode] = useState(null);
   const [selectedNodeDetails, setSelectedNodeDetails] = useState(null);
+  const [searchedMentor, setSearchedMentor] = useState(null);
   const [selectedGraphLayout, setSelectedGraphLayout] = useState("random");
   const [nodeAddSize, setNodeAddSize] = useState(0);
   const [edgeAddSize, setEdgeAddSize] = useState(0);
@@ -16,6 +17,8 @@ export const GlobalProvider = ({ children }) => {
         setSelectedNode,
         selectedNodeDetails,
         setSelectedNodeDetails,
+        searchedMentor,
+        setSearchedMentor,
         selectedGraphLayout,
         setSelectedGraphLayout,
         nodeAddSize,

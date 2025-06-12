@@ -180,6 +180,11 @@
   color: #007bff;
 }
 
+.suggestion-item-selected {
+  background-color: #007bff;
+  color: white;
+}
+
 .suggestion-item:last-child {
   border-bottom: none;
 }

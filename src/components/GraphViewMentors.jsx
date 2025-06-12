@@ -19,10 +19,59 @@ export default function GraphViewMentors() {
     setSelectedNode,
     selectedNodeDetails,
     setSelectedNodeDetails,
+    searchedMentor,
+    setSearchedMentor,
     selectedGraphLayout,
     nodeAddSize,
     edgeAddSize,
   } = useGlobalContext();
+
+  // Function to calculate detailed node information
+  const calculateNodeDetails = (nodeName) => {
+    const mentorCollaborations = [];
+    const memberCollaborations = [];
+    let mentorCount = 0;
+    let totalCollaborations = 0;
+
+    jsonData.forEach(({ mentor, member1, member2 }) => {
+      const cleanMentor = mentor.split("-")[0].trim();
+      const cleanMember1 = member1.split("-")[0].trim();
+      const cleanMember2 = member2.split("-")[0].trim();
+
+      if (cleanMentor === nodeName) {
+        // This person was a mentor
+        mentorCount++;
+
+        // Add commission members
+        if (!mentorCollaborations.includes(cleanMember1)) {
+          mentorCollaborations.push(cleanMember1);
+        }
+        if (!mentorCollaborations.includes(cleanMember2)) {
+          mentorCollaborations.push(cleanMember2);
+        }
+      }
+
+      if (cleanMember1 === nodeName || cleanMember2 === nodeName) {
+        // This person was a commission member
+        if (!memberCollaborations.includes(cleanMentor)) {
+          memberCollaborations.push(cleanMentor);
+        }
+      }
+    });
+
+    // Calculate total collaborations (degree in graph)
+    if (graphRef.current && graphRef.current.hasNode(nodeName)) {
+      totalCollaborations = graphRef.current.degree(nodeName);
+    }
+
+    return {
+      name: nodeName,
+      mentorCount,
+      totalCollaborations,
+      mentorCollaborations: mentorCollaborations.sort(),
+      memberCollaborations: memberCollaborations.sort(),
+    };
+  };
 
   useEffect(() => {
     const graph = new Graph();
@@ -132,53 +181,6 @@ export default function GraphViewMentors() {
       },
     });
 
-    // Function to calculate detailed node information
-    const calculateNodeDetails = (nodeName) => {
-      const mentorCollaborations = [];
-      const memberCollaborations = [];
-      let mentorCount = 0;
-      let totalCollaborations = 0;
-
-      jsonData.forEach(({ mentor, member1, member2 }) => {
-        const cleanMentor = mentor.split("-")[0].trim();
-        const cleanMember1 = member1.split("-")[0].trim();
-        const cleanMember2 = member2.split("-")[0].trim();
-
-        if (cleanMentor === nodeName) {
-          // This person was a mentor
-          mentorCount++;
-
-          // Add commission members
-          if (!mentorCollaborations.includes(cleanMember1)) {
-            mentorCollaborations.push(cleanMember1);
-          }
-          if (!mentorCollaborations.includes(cleanMember2)) {
-            mentorCollaborations.push(cleanMember2);
-          }
-        }
-
-        if (cleanMember1 === nodeName || cleanMember2 === nodeName) {
-          // This person was a commission member
-          if (!memberCollaborations.includes(cleanMentor)) {
-            memberCollaborations.push(cleanMentor);
-          }
-        }
-      });
-
-      // Calculate total collaborations (degree in graph)
-      if (graph && graph.hasNode(nodeName)) {
-        totalCollaborations = graph.degree(nodeName);
-      }
-
-      return {
-        name: nodeName,
-        mentorCount,
-        totalCollaborations,
-        mentorCollaborations: mentorCollaborations.sort(),
-        memberCollaborations: memberCollaborations.sort(),
-      };
-    };
-
     rendererRef.current.on("clickNode", ({ node }) => {
       clickedNode.current = node;
       setSelectedNode(node);
@@ -241,6 +243,30 @@ export default function GraphViewMentors() {
 
     rendererRef.current.refresh();
   }, [nodeAddSize, edgeAddSize]);
+
+  // SEARCH EFFECT - Handle searched mentor
+  useEffect(() => {
+    if (!searchedMentor || !graphRef.current) return;
+
+    const graph = graphRef.current;
+
+    // Check if the searched mentor exists as a node in the graph
+    if (graph.hasNode(searchedMentor)) {
+      // Set the clicked node state to focus on this mentor
+      clickedNode.current = searchedMentor;
+      setSelectedNode(searchedMentor);
+
+      // Calculate and set detailed information
+      const nodeDetails = calculateNodeDetails(searchedMentor);
+      setSelectedNodeDetails(nodeDetails);
+
+      // Refresh the renderer to show the focus
+      rendererRef.current.refresh();
+
+      // Clear the search state to prevent re-triggering
+      setSearchedMentor(null);
+    }
+  }, [searchedMentor]);
 
   return <div ref={containerRef} style={{ width: "100%", height: "100%" }} />;
 }

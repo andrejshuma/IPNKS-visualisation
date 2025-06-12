@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import "./GraphNavbar.css";
 import jsonData from "../assets/diplomas.json";
 import { useGlobalContext } from "../GlobalProvider.jsx";
-import { node } from "globals";
 
 const GraphNavbar = () => {
   const { selectedGraphLayout, setSelectedGraphLayout } = useGlobalContext();
   const { nodeAddSize, setNodeAddSize } = useGlobalContext();
   const { edgeAddSize, setEdgeAddSize } = useGlobalContext();
+  const { searchedMentor, setSearchedMentor } = useGlobalContext();
   const [searchTerm, setSearchTerm] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
 
   const uniquePeople = new Set();
   const edgeCount = new Set();
@@ -32,16 +33,61 @@ const GraphNavbar = () => {
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
     setShowSuggestions(e.target.value.length > 0);
+    setSelectedSuggestionIndex(-1); // Reset selection when typing
+  };
+
+  const handleSearchKeyDown = (e) => {
+    if (!showSuggestions || filteredMentors.length === 0) {
+      return;
+    }
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setSelectedSuggestionIndex((prev) =>
+          prev < filteredMentors.length - 1 ? prev + 1 : 0
+        );
+        break;
+
+      case "ArrowUp":
+        e.preventDefault();
+        setSelectedSuggestionIndex((prev) =>
+          prev > 0 ? prev - 1 : filteredMentors.length - 1
+        );
+        break;
+
+      case "Enter":
+        e.preventDefault();
+        if (selectedSuggestionIndex >= 0) {
+          const selectedMentor = filteredMentors[selectedSuggestionIndex];
+          handleSuggestionClick(selectedMentor);
+        } else if (filteredMentors.length > 0) {
+          const firstMatch = filteredMentors[0];
+          handleSuggestionClick(firstMatch);
+        }
+        break;
+
+      case "Escape":
+        setShowSuggestions(false);
+        setSelectedSuggestionIndex(-1);
+        break;
+    }
   };
 
   const handleSuggestionClick = (mentor) => {
+    const cleanMentorName = mentor.split("-")[0].trim();
     setSearchTerm(mentor);
     setShowSuggestions(false);
+    setSelectedSuggestionIndex(-1);
+    setSearchedMentor(cleanMentorName);
   };
 
   const handleSearchBlur = () => {
     // Delay hiding suggestions to allow click events
-    setTimeout(() => setShowSuggestions(false), 150);
+    setTimeout(() => {
+      setShowSuggestions(false);
+      setSelectedSuggestionIndex(-1);
+    }, 150);
   };
 
   jsonData.forEach((data) => {
@@ -72,6 +118,7 @@ const GraphNavbar = () => {
               className="search-input"
               value={searchTerm}
               onChange={handleSearchChange}
+              onKeyDown={handleSearchKeyDown}
               onFocus={() => searchTerm.length > 0 && setShowSuggestions(true)}
               onBlur={handleSearchBlur}
             />
@@ -80,7 +127,11 @@ const GraphNavbar = () => {
                 {filteredMentors.slice(0, 5).map((mentor, index) => (
                   <div
                     key={index}
-                    className="suggestion-item"
+                    className={`suggestion-item ${
+                      index === selectedSuggestionIndex
+                        ? "suggestion-item-selected"
+                        : ""
+                    }`}
                     onClick={() => handleSuggestionClick(mentor)}
                   >
                     {mentor}
