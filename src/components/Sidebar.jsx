@@ -18,7 +18,9 @@ const Sidebar = () => {
         </button>
         {!isCollapsed && (
           <h3>
-            {selectedNodeDetails ? selectedNodeDetails.name : "Node Details"}
+            {selectedNodeDetails
+              ? selectedNodeDetails.name
+              : "Детали за ментор"}
           </h3>
         )}
       </div>
@@ -90,7 +92,8 @@ const Sidebar = () => {
               <div className="placeholder-content">
                 <h4>Нема селектиран јазол</h4>
                 <p>
-                  Кликнете на јазол во графикот за да видите детални информации.
+                  Кликнете или пребарајте јазол во графикот за да видите детални
+                  информации.
                 </p>
                 <div className="placeholder-icon">📊</div>
               </div>
