@@ -33,6 +33,19 @@ export default function GraphViewMentors() {
     let mentorCount = 0;
     let totalCollaborations = 0;
 
+    // Helper function to get edge weight between two nodes
+    const getEdgeWeight = (node1, node2) => {
+      if (!graphRef.current) return 0;
+      const key = [node1, node2].sort().join("-");
+      if (graphRef.current.hasEdge(node1, node2)) {
+        const edgeAttrs = graphRef.current.getEdgeAttributes(node1, node2);
+        // Extract count from label like "5 interactions"
+        const match = edgeAttrs.label?.match(/(\d+) interactions/);
+        return match ? parseInt(match[1], 10) : 0;
+      }
+      return 0;
+    };
+
     jsonData.forEach(({ mentor, member1, member2 }) => {
       const cleanMentor = mentor.split("-")[0].trim();
       const cleanMember1 = member1.split("-")[0].trim();
@@ -42,19 +55,22 @@ export default function GraphViewMentors() {
         // This person was a mentor
         mentorCount++;
 
-        // Add commission members
-        if (!mentorCollaborations.includes(cleanMember1)) {
-          mentorCollaborations.push(cleanMember1);
+        // Add commission members with weights
+        if (!mentorCollaborations.find((m) => m.name === cleanMember1)) {
+          const weight = getEdgeWeight(nodeName, cleanMember1);
+          mentorCollaborations.push({ name: cleanMember1, weight });
         }
-        if (!mentorCollaborations.includes(cleanMember2)) {
-          mentorCollaborations.push(cleanMember2);
+        if (!mentorCollaborations.find((m) => m.name === cleanMember2)) {
+          const weight = getEdgeWeight(nodeName, cleanMember2);
+          mentorCollaborations.push({ name: cleanMember2, weight });
         }
       }
 
       if (cleanMember1 === nodeName || cleanMember2 === nodeName) {
         // This person was a commission member
-        if (!memberCollaborations.includes(cleanMentor)) {
-          memberCollaborations.push(cleanMentor);
+        if (!memberCollaborations.find((m) => m.name === cleanMentor)) {
+          const weight = getEdgeWeight(nodeName, cleanMentor);
+          memberCollaborations.push({ name: cleanMentor, weight });
         }
       }
     });
@@ -68,8 +84,12 @@ export default function GraphViewMentors() {
       name: nodeName,
       mentorCount,
       totalCollaborations,
-      mentorCollaborations: mentorCollaborations.sort(),
-      memberCollaborations: memberCollaborations.sort(),
+      mentorCollaborations: mentorCollaborations.sort((a, b) =>
+        a.name.localeCompare(b.name)
+      ),
+      memberCollaborations: memberCollaborations.sort((a, b) =>
+        a.name.localeCompare(b.name)
+      ),
     };
   };
 

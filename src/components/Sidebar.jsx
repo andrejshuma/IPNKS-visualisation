@@ -61,8 +61,10 @@ const Sidebar = () => {
                     >
                       {selectedNodeDetails.mentorCollaborations.map(
                         (member, index) => (
-                          <option key={index} value={member}>
-                            {member}
+                          <option key={index} value={member.name || member}>
+                            {typeof member === "object"
+                              ? `${member.name} (${member.weight})`
+                              : member}
                           </option>
                         )
                       )}
@@ -84,8 +86,10 @@ const Sidebar = () => {
                     >
                       {selectedNodeDetails.memberCollaborations.map(
                         (mentor, index) => (
-                          <option key={index} value={mentor}>
-                            {mentor}
+                          <option key={index} value={mentor.name || mentor}>
+                            {typeof mentor === "object"
+                              ? `${mentor.name} (${mentor.weight})`
+                              : mentor}
                           </option>
                         )
                       )}
