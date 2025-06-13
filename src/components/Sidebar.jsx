@@ -4,7 +4,8 @@ import { useGlobalContext } from "../GlobalProvider.jsx";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const { selectedNode, selectedNodeDetails } = useGlobalContext();
+  const { selectedNode, selectedNodeDetails, setSearchedMentor } =
+    useGlobalContext();
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -53,7 +54,11 @@ const Sidebar = () => {
                 <h4>Членови во комисија (како ментор)</h4>
                 <div className="dropdown-list">
                   {selectedNodeDetails.mentorCollaborations.length > 0 ? (
-                    <select className="collaboration-dropdown" size="5">
+                    <select
+                      className="collaboration-dropdown"
+                      size="5"
+                      onChange={(e) => setSearchedMentor(e.target.value)}
+                    >
                       {selectedNodeDetails.mentorCollaborations.map(
                         (member, index) => (
                           <option key={index} value={member}>
@@ -72,7 +77,11 @@ const Sidebar = () => {
                 <h4>Ментори (како член)</h4>
                 <div className="dropdown-list">
                   {selectedNodeDetails.memberCollaborations.length > 0 ? (
-                    <select className="collaboration-dropdown" size="5">
+                    <select
+                      className="collaboration-dropdown"
+                      size="5"
+                      onChange={(e) => setSearchedMentor(e.target.value)}
+                    >
                       {selectedNodeDetails.memberCollaborations.map(
                         (mentor, index) => (
                           <option key={index} value={mentor}>
