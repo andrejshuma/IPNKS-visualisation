@@ -18,7 +18,7 @@ const Sidebar = () => {
           {isCollapsed ? "→" : "←"}
         </button>
         {!isCollapsed && (
-          <h3>
+          <h3 style={{textAlign: "right"}}>
             {selectedNodeDetails
               ? selectedNodeDetails.name
               : "Детали за ментор"}
