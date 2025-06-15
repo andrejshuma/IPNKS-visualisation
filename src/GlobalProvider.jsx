@@ -9,6 +9,12 @@ export const GlobalProvider = ({ children }) => {
   const [selectedGraphLayout, setSelectedGraphLayout] = useState("random");
   const [nodeAddSize, setNodeAddSize] = useState(0);
   const [edgeAddSize, setEdgeAddSize] = useState(0);
+  const [minInteractions, setMinInteractions] = useState("");
+  const [maxInteractions, setMaxInteractions] = useState("");
+  const [activeNodeFilter, setActiveNodeFilter] = useState({
+    min: null,
+    max: null,
+  });
 
   return (
     <GlobalContext.Provider
@@ -25,6 +31,12 @@ export const GlobalProvider = ({ children }) => {
         setNodeAddSize,
         edgeAddSize,
         setEdgeAddSize,
+        minInteractions,
+        setMinInteractions,
+        maxInteractions,
+        setMaxInteractions,
+        activeNodeFilter,
+        setActiveNodeFilter,
       }}
     >
       {children}

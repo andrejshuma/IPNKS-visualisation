@@ -8,6 +8,14 @@ const GraphNavbar = () => {
   const { nodeAddSize, setNodeAddSize } = useGlobalContext();
   const { edgeAddSize, setEdgeAddSize } = useGlobalContext();
   const { searchedMentor, setSearchedMentor } = useGlobalContext();
+  const {
+    minInteractions,
+    setMinInteractions,
+    maxInteractions,
+    setMaxInteractions,
+    activeNodeFilter,
+    setActiveNodeFilter,
+  } = useGlobalContext();
   const [searchTerm, setSearchTerm] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
@@ -90,6 +98,18 @@ const GraphNavbar = () => {
     }, 150);
   };
 
+  const handleApplyFilter = () => {
+    const min = minInteractions === "" ? null : parseInt(minInteractions, 10);
+    const max = maxInteractions === "" ? null : parseInt(maxInteractions, 10);
+    setActiveNodeFilter({ min, max });
+  };
+
+  const handleResetFilter = () => {
+    setMinInteractions("");
+    setMaxInteractions("");
+    setActiveNodeFilter({ min: null, max: null });
+  };
+
   jsonData.forEach((data) => {
     const { mentor, member1, member2 } = data;
     uniquePeople.add(mentor);
@@ -143,12 +163,51 @@ const GraphNavbar = () => {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: ".4rem" }}>
           <label className="search-label">Мин Колаборации:</label>
-          <input type="number" className="search-input-number" />
+          <input
+            type="number"
+            className="search-input-number"
+            value={minInteractions}
+            onChange={(e) => setMinInteractions(e.target.value)}
+            placeholder="0"
+            min="0"
+          />
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: ".4rem" }}>
           <label className="search-label">Макс Колаборации:</label>
-          <input type="number" className="search-input-number" />
+          <input
+            type="number"
+            className="search-input-number"
+            value={maxInteractions}
+            onChange={(e) => setMaxInteractions(e.target.value)}
+            placeholder="∞"
+            min="0"
+          />
         </div>
+        <div style={{ display: "flex", alignItems: "center", gap: ".4rem" }}>
+          <button
+            className="control-btn"
+            onClick={handleApplyFilter}
+            style={{
+              backgroundColor: "#28a745",
+              color: "white",
+            }}
+          >
+            Примени
+          </button>
+          <button
+            className="control-btn"
+            onClick={handleResetFilter}
+            style={{
+              backgroundColor: "#dc3545",
+              color: "white",
+            }}
+          >
+            Ресетирај
+          </button>
+        </div>
+      </div>
+
+      <div className="navbar-section">
         <button
           className={`control-btn ${
             selectedGraphLayout === "circular" ? "control-btn-active" : ""
@@ -165,9 +224,6 @@ const GraphNavbar = () => {
         >
           Случаен
         </button>
-      </div>
-
-      <div className="navbar-section">
         <div className="control-group">
           <label>Големина на јазли:</label>
           <input

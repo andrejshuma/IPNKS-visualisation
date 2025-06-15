@@ -13,6 +13,7 @@ export default function GraphViewMentors() {
   const containerRef = useRef(null);
   const hoveredNode = useRef(null);
   const clickedNode = useRef(null);
+  const activeFilterRef = useRef({ min: null, max: null });
 
   const {
     selectedNode,
@@ -24,6 +25,7 @@ export default function GraphViewMentors() {
     selectedGraphLayout,
     nodeAddSize,
     edgeAddSize,
+    activeNodeFilter,
   } = useGlobalContext();
 
   // Function to calculate detailed node information
@@ -91,6 +93,22 @@ export default function GraphViewMentors() {
         a.name.localeCompare(b.name)
       ),
     };
+  };
+
+  // Function to calculate total weight of all edges for a node
+  const calculateNodeTotalWeight = (graph, nodeName) => {
+    let totalWeight = 0;
+    if (!graph.hasNode(nodeName)) return totalWeight;
+
+    graph.forEachEdge(nodeName, (edge, attributes) => {
+      // Extract weight from label like "5 interactions"
+      const match = attributes.label?.match(/(\d+) interactions/);
+      if (match) {
+        totalWeight += parseInt(match[1], 10);
+      }
+    });
+
+    return totalWeight;
   };
 
   useEffect(() => {
@@ -163,12 +181,60 @@ export default function GraphViewMentors() {
 
     applyLayout(graph, selectedGraphLayout);
 
+    // Debug: Show some node weights for testing
+    const nodeWeights = [];
+    graph.forEachNode((node) => {
+      const weight = calculateNodeTotalWeight(graph, node);
+      nodeWeights.push({ node, weight });
+    });
+    nodeWeights.sort((a, b) => b.weight - a.weight);
+    console.log("Node weights (top 10):", nodeWeights.slice(0, 10));
+    console.log("Node weights (bottom 5):", nodeWeights.slice(-5));
+
     graphRef.current = graph;
     rendererRef.current = new Sigma(graph, containerRef.current, {
       labelRenderedSizeThreshold: 0,
       nodeReducer: (node, data) => {
         const focusedNode = clickedNode.current || hoveredNode.current;
 
+        // Apply interaction filter first
+        if (
+          activeFilterRef.current.min !== null ||
+          activeFilterRef.current.max !== null
+        ) {
+          const nodeWeight = calculateNodeTotalWeight(graph, node);
+          let nodeVisible = true;
+
+          if (
+            activeFilterRef.current.min !== null &&
+            nodeWeight < activeFilterRef.current.min
+          ) {
+            nodeVisible = false;
+          }
+          if (
+            activeFilterRef.current.max !== null &&
+            nodeWeight > activeFilterRef.current.max
+          ) {
+            nodeVisible = false;
+          }
+
+          if (!nodeVisible) {
+            return {
+              ...data,
+              hidden: true,
+              label: "",
+            };
+          }
+
+          // When filtering is active, show all visible nodes with their labels
+          return {
+            ...data,
+            hidden: false,
+            label: data.label,
+          };
+        }
+
+        // Default behavior when no filter is active
         if (!focusedNode) {
           return {
             ...data,
@@ -189,6 +255,36 @@ export default function GraphViewMentors() {
       edgeReducer: (edge, data) => {
         const focusedNode = clickedNode.current || hoveredNode.current;
 
+        // If filtering is active, show edges between visible nodes
+        if (
+          activeFilterRef.current.min !== null ||
+          activeFilterRef.current.max !== null
+        ) {
+          const [source, target] = graph.extremities(edge);
+          const sourceWeight = calculateNodeTotalWeight(graph, source);
+          const targetWeight = calculateNodeTotalWeight(graph, target);
+
+          const sourceVisible = !(
+            (activeFilterRef.current.min !== null &&
+              sourceWeight < activeFilterRef.current.min) ||
+            (activeFilterRef.current.max !== null &&
+              sourceWeight > activeFilterRef.current.max)
+          );
+
+          const targetVisible = !(
+            (activeFilterRef.current.min !== null &&
+              targetWeight < activeFilterRef.current.min) ||
+            (activeFilterRef.current.max !== null &&
+              targetWeight > activeFilterRef.current.max)
+          );
+
+          return {
+            ...data,
+            hidden: !(sourceVisible && targetVisible),
+          };
+        }
+
+        // Default behavior when no filter is active
         if (!focusedNode) return { ...data, hidden: true };
 
         const [source, target] = graph.extremities(edge);
@@ -263,6 +359,25 @@ export default function GraphViewMentors() {
 
     rendererRef.current.refresh();
   }, [nodeAddSize, edgeAddSize]);
+
+  // FILTER EFFECT - Handle node interaction filter changes
+  useEffect(() => {
+    console.log("Filter changed:", activeNodeFilter);
+    activeFilterRef.current = activeNodeFilter;
+
+    if (!rendererRef.current || !graphRef.current) return;
+
+    // Force Sigma to recalculate node and edge visibility
+    const graph = graphRef.current;
+
+    // Trigger a complete re-render by updating a dummy attribute and then refreshing
+    graph.forEachNode((node) => {
+      const currentValue = graph.getNodeAttribute(node, "filterUpdate") || 0;
+      graph.setNodeAttribute(node, "filterUpdate", currentValue + 1);
+    });
+
+    rendererRef.current.refresh();
+  }, [activeNodeFilter]);
 
   // SEARCH EFFECT - Handle searched mentor
   useEffect(() => {
