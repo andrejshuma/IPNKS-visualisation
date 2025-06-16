@@ -297,6 +297,8 @@ export default function GraphViewMentors() {
       },
     });
 
+    enableNodeDragging(rendererRef.current, graph);
+
     rendererRef.current.on("clickNode", ({ node }) => {
       clickedNode.current = node;
       setSelectedNode(node);
@@ -475,3 +477,47 @@ function applyLayout(graph, layoutType) {
     });
   }
 }
+
+export function enableNodeDragging(sigma, graph) {
+  let draggedNode = null;
+  let isDragging = false;
+
+  const getGraphCoords = (event) => {
+    const rect = sigma.getContainer().getBoundingClientRect();
+    return sigma.viewportToGraph({
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+    });
+  };
+
+  sigma.on("downNode", (e) => {
+    draggedNode = e.node;
+    isDragging = true;
+    sigma.getCamera().disable();
+  });
+
+  sigma.getContainer().addEventListener("pointermove", (e) => {
+    if (!isDragging || !draggedNode) return;
+    const coords = getGraphCoords(e);
+    graph.setNodeAttribute(draggedNode, "x", coords.x);
+    graph.setNodeAttribute(draggedNode, "y", coords.y);
+  });
+
+  sigma.getContainer().addEventListener("pointerup", () => {
+    if (isDragging) {
+      isDragging = false;
+      draggedNode = null;
+      sigma.getCamera().enable();
+    }
+  });
+
+  sigma.getContainer().addEventListener("mouseleave", () => {
+    if (isDragging) {
+      isDragging = false;
+      draggedNode = null;
+      sigma.getCamera().enable();
+    }
+  });
+}
+
+

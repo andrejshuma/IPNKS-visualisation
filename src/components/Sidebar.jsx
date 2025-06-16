@@ -59,7 +59,9 @@ const Sidebar = () => {
                       size="5"
                       onChange={(e) => setSearchedMentor(e.target.value)}
                     >
-                      {selectedNodeDetails.mentorCollaborations.map(
+                      {selectedNodeDetails.mentorCollaborations
+                          .sort((a, b) => b.weight - a.weight)
+                          .map(
                         (member, index) => (
                           <option key={index} value={member.name || member}>
                             {typeof member === "object"
@@ -84,7 +86,9 @@ const Sidebar = () => {
                       size="5"
                       onChange={(e) => setSearchedMentor(e.target.value)}
                     >
-                      {selectedNodeDetails.memberCollaborations.map(
+                      {selectedNodeDetails.memberCollaborations
+                          .sort((a, b) => b.weight - a.weight)
+                          .map(
                         (mentor, index) => (
                           <option key={index} value={mentor.name || mentor}>
                             {typeof mentor === "object"
