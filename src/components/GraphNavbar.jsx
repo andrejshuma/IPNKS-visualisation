@@ -128,14 +128,159 @@ const GraphNavbar = () => {
   });
 
   return (
-    <div className="graph-navbar">
-      <div className="navbar-section">
-        <div style={{ display: "flex", alignItems: "center", gap: ".4rem" }}>
-          <label className="search-label">Пребарај ментор:</label>
+    <div
+      className="graph-navbar"
+      data-stats={`Членови: ${uniquePeople.size} | Соработки: ${
+        jsonData.length * 2
+      }`}
+    >
+      {/* Desktop Layout */}
+      <div className="desktop-layout">
+        <div className="navbar-section">
+          <div style={{ display: "flex", alignItems: "center", gap: ".4rem" }}>
+            <label className="search-label">Пребарај ментор:</label>
+            <div className="search-container">
+              <input
+                type="text"
+                className="search-input"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                onKeyDown={handleSearchKeyDown}
+                onFocus={() =>
+                  searchTerm.length > 0 && setShowSuggestions(true)
+                }
+                onBlur={handleSearchBlur}
+              />
+              {showSuggestions && filteredMentors.length > 0 && (
+                <div className="suggestions-dropdown">
+                  {filteredMentors.slice(0, 5).map((mentor, index) => (
+                    <div
+                      key={index}
+                      className={`suggestion-item ${
+                        index === selectedSuggestionIndex
+                          ? "suggestion-item-selected"
+                          : ""
+                      }`}
+                      onClick={() => handleSuggestionClick(mentor)}
+                    >
+                      {mentor}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+          <div
+            style={{ display: "flex", alignItems: "center", gap: ".4rem" }}
+            className="min-collab-container"
+          >
+            <label className="search-label">Мин Колаборации:</label>
+            <input
+              type="number"
+              className="search-input-number"
+              value={minInteractions}
+              onChange={(e) => setMinInteractions(e.target.value)}
+              placeholder="0"
+              min="0"
+            />
+          </div>
+          <div
+            style={{ display: "flex", alignItems: "center", gap: ".4rem" }}
+            className="max-collab-container"
+          >
+            <label className="search-label">Макс Колаборации:</label>
+            <input
+              type="number"
+              className="search-input-number"
+              value={maxInteractions}
+              onChange={(e) => setMaxInteractions(e.target.value)}
+              placeholder="∞"
+              min="0"
+            />
+          </div>
+          <div
+            style={{ display: "flex", alignItems: "center", gap: ".4rem" }}
+            className="filter-buttons-container"
+          >
+            <button
+              className="control-btn"
+              onClick={handleApplyFilter}
+              style={{
+                backgroundColor: "#28a745",
+                color: "white",
+              }}
+            >
+              Примени
+            </button>
+            <button
+              className="control-btn"
+              onClick={handleResetFilter}
+              style={{
+                backgroundColor: "#dc3545",
+                color: "white",
+              }}
+            >
+              Ресетирај
+            </button>
+          </div>
+        </div>
+
+        <div className="navbar-section">
+          <button
+            className={`control-btn ${
+              selectedGraphLayout === "circular" ? "control-btn-active" : ""
+            }`}
+            onClick={() => setSelectedGraphLayout("circular")}
+          >
+            Кружен
+          </button>
+          <button
+            className={`control-btn ${
+              selectedGraphLayout === "random" ? "control-btn-active" : ""
+            }`}
+            onClick={() => setSelectedGraphLayout("random")}
+          >
+            Случаен
+          </button>
+          <div className="control-group">
+            <label>Големина на јазли:</label>
+            <input
+              type="range"
+              min="0"
+              max="5"
+              value={nodeAddSize}
+              onChange={(e) => setNodeAddSize(Number(e.target.value))}
+            />
+          </div>
+          <div className="control-group">
+            <label>Големина на ребра:</label>
+            <input
+              type="range"
+              min="1"
+              max="3"
+              value={edgeAddSize}
+              onChange={(e) => setEdgeAddSize(Number(e.target.value))}
+            />
+          </div>
+          <div className="stats-inline">
+            <span className="stat-item">Членови: {uniquePeople.size}</span>
+            <span className="stat-item">Соработки: {jsonData.length * 2}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile/Tablet Layout */}
+      <div className="mobile-layout">
+        {/* Search Card */}
+        <div className="control-card search-card">
+          <div className="card-header">
+            <h4>🔍 Пребарај</h4>
+          </div>
           <div className="search-container">
             <input
               type="text"
-              className="search-input"
+              className="search-input-mobile"
+              placeholder="Внеси име на ментор..."
               value={searchTerm}
               onChange={handleSearchChange}
               onKeyDown={handleSearchKeyDown}
@@ -161,92 +306,115 @@ const GraphNavbar = () => {
             )}
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: ".4rem" }}>
-          <label className="search-label">Мин Колаборации:</label>
-          <input
-            type="number"
-            className="search-input-number"
-            value={minInteractions}
-            onChange={(e) => setMinInteractions(e.target.value)}
-            placeholder="0"
-            min="0"
-          />
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: ".4rem" }}>
-          <label className="search-label">Макс Колаборации:</label>
-          <input
-            type="number"
-            className="search-input-number"
-            value={maxInteractions}
-            onChange={(e) => setMaxInteractions(e.target.value)}
-            placeholder="∞"
-            min="0"
-          />
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: ".4rem" }}>
-          <button
-            className="control-btn"
-            onClick={handleApplyFilter}
-            style={{
-              backgroundColor: "#28a745",
-              color: "white",
-            }}
-          >
-            Примени
-          </button>
-          <button
-            className="control-btn"
-            onClick={handleResetFilter}
-            style={{
-              backgroundColor: "#dc3545",
-              color: "white",
-            }}
-          >
-            Ресетирај
-          </button>
-        </div>
-      </div>
 
-      <div className="navbar-section">
-        <button
-          className={`control-btn ${
-            selectedGraphLayout === "circular" ? "control-btn-active" : ""
-          }`}
-          onClick={() => setSelectedGraphLayout("circular")}
-        >
-          Кружен
-        </button>
-        <button
-          className={`control-btn ${
-            selectedGraphLayout === "random" ? "control-btn-active" : ""
-          }`}
-          onClick={() => setSelectedGraphLayout("random")}
-        >
-          Случаен
-        </button>
-        <div className="control-group">
-          <label>Големина на јазли:</label>
-          <input
-            type="range"
-            min="0"
-            max="5"
-            value={nodeAddSize}
-            onChange={(e) => setNodeAddSize(Number(e.target.value))}
-          />
+        {/* Filter Card - Hidden on phone */}
+        <div className="control-card filter-card">
+          <div className="card-header">
+            <h4>🎚️ Филтер</h4>
+          </div>
+          <div className="filter-inputs">
+            <div className="input-group min-filter-group">
+              <label>Мин</label>
+              <input
+                type="number"
+                className="filter-input"
+                value={minInteractions}
+                onChange={(e) => setMinInteractions(e.target.value)}
+                placeholder="0"
+                min="0"
+              />
+            </div>
+            <div className="input-group max-filter-group">
+              <label>Макс</label>
+              <input
+                type="number"
+                className="filter-input"
+                value={maxInteractions}
+                onChange={(e) => setMaxInteractions(e.target.value)}
+                placeholder="∞"
+                min="0"
+              />
+            </div>
+          </div>
+          <div className="filter-actions">
+            <button className="btn-apply" onClick={handleApplyFilter}>
+              Примени
+            </button>
+            <button className="btn-reset" onClick={handleResetFilter}>
+              Ресетирај
+            </button>
+          </div>
         </div>
-        <div className="control-group">
-          <label>Големина на ребра:</label>
-          <input
-            type="range"
-            min="1"
-            max="3"
-            value={edgeAddSize}
-            onChange={(e) => setEdgeAddSize(Number(e.target.value))}
-          />
+
+        {/* Layout & Controls Card */}
+        <div className="control-card layout-card">
+          <div className="card-header">
+            <h4>⚙️ Контроли</h4>
+          </div>
+          <div className="layout-buttons">
+            <button
+              className={`layout-btn ${
+                selectedGraphLayout === "circular" ? "active" : ""
+              }`}
+              onClick={() => setSelectedGraphLayout("circular")}
+            >
+              <span className="btn-icon">○</span>
+              Кружен
+            </button>
+            <button
+              className={`layout-btn ${
+                selectedGraphLayout === "random" ? "active" : ""
+              }`}
+              onClick={() => setSelectedGraphLayout("random")}
+            >
+              <span className="btn-icon">⚡</span>
+              Случаен
+            </button>
+          </div>
+
+          <div className="size-controls">
+            <div className="size-control">
+              <label>Јазли</label>
+              <input
+                type="range"
+                min="0"
+                max="5"
+                value={nodeAddSize}
+                onChange={(e) => setNodeAddSize(Number(e.target.value))}
+                className="range-slider"
+              />
+              <span className="range-value">{nodeAddSize}</span>
+            </div>
+            <div className="size-control">
+              <label>Ребра</label>
+              <input
+                type="range"
+                min="1"
+                max="3"
+                value={edgeAddSize}
+                onChange={(e) => setEdgeAddSize(Number(e.target.value))}
+                className="range-slider"
+              />
+              <span className="range-value">{edgeAddSize}</span>
+            </div>
+          </div>
         </div>
-        <div className="stats-inline">
-          <span className="stat-item">Членови: {uniquePeople.size}</span>
-          <span className="stat-item">Соработки: {jsonData.length * 2}</span>
+
+        {/* Stats Card */}
+        <div className="control-card stats-card">
+          <div className="card-header">
+            <h4>📊 Статистики</h4>
+          </div>
+          <div className="stats-grid">
+            <div className="stat">
+              <span className="stat-number">{uniquePeople.size}</span>
+              <span className="stat-label">Членови</span>
+            </div>
+            <div className="stat">
+              <span className="stat-number">{jsonData.length * 2}</span>
+              <span className="stat-label">Соработки</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -224,3 +224,463 @@
 .sidebar::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
+
+/* Mobile responsive styles */
+@media (max-width: 1300px) {
+  .sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60vh;
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid #dee2e6;
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .sidebar.collapsed {
+    transform: translateY(calc(100% - 60px));
+    width: 100%;
+  }
+
+  .sidebar.mobile .sidebar-header {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    position: relative;
+  }
+
+  .sidebar.mobile .toggle-btn {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .sidebar.mobile .sidebar-header h3 {
+    text-align: center;
+    flex: 1;
+    margin: 0;
+  }
+
+  .sidebar.mobile .sidebar-content {
+    padding: 1rem;
+    height: calc(60vh - 80px);
+    overflow-y: auto;
+  }
+
+  /* Adjust main content to account for mobile sidebar */
+  body {
+    padding-bottom: 60px;
+  }
+
+  /* Hide desktop layout on mobile */
+  .desktop-layout {
+    display: none;
+  }
+
+  /* Show mobile layout */
+  .mobile-layout {
+    display: block;
+  }
+}
+
+/* Show desktop layout by default, hide mobile layout */
+.desktop-layout {
+  display: block;
+}
+
+.mobile-layout {
+  display: none;
+}
+
+/* Mobile/Tablet Modern Card Layout Styles */
+.professor-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: white;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+}
+
+.professor-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.professor-avatar {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  margin-right: 1rem;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.professor-details h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: white;
+}
+
+.professor-title {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.stat-number {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.collaboration-cards {
+  display: grid;
+  gap: 1rem;
+}
+
+.collaboration-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.collaboration-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.card-header {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  color: white;
+}
+
+.card-icon {
+  font-size: 1.5rem;
+  margin-right: 0.75rem;
+  background: rgba(255, 255, 255, 0.2);
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.card-header h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+}
+
+.card-content {
+  padding: 1.25rem;
+}
+
+.collaborator-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.collaborator-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.collaborator-item:hover {
+  background: #e3f2fd;
+  border-color: #2196f3;
+  transform: translateX(4px);
+}
+
+.collaborator-name {
+  font-size: 0.9rem;
+  color: #343a40;
+  font-weight: 500;
+  flex: 1;
+}
+
+.collaborator-weight {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  min-width: 35px;
+  text-align: center;
+}
+
+.more-indicator {
+  text-align: center;
+  color: #6c757d;
+  font-size: 0.85rem;
+  font-style: italic;
+  padding: 0.5rem;
+  background: linear-gradient(90deg, transparent, #f8f9fa, transparent);
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #6c757d;
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+  display: block;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+/* Removed enhanced no-selection state for mobile - using same design as desktop */
+
+@media (max-width: 768px) {
+  .professor-card {
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .professor-avatar {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+
+  .professor-details h3 {
+    font-size: 1.2rem;
+  }
+
+  .stat-number {
+    font-size: 1.6rem;
+  }
+
+  .stats-grid {
+    gap: 0.75rem;
+  }
+
+  .stat-card {
+    padding: 0.875rem;
+  }
+
+  .collaboration-cards {
+    gap: 0.875rem;
+  }
+
+  .card-header {
+    padding: 0.875rem 1rem;
+  }
+
+  .card-content {
+    padding: 1rem;
+  }
+
+  .collaborator-item {
+    padding: 0.625rem 0.875rem;
+  }
+
+  .collaborator-name {
+    font-size: 0.85rem;
+  }
+
+  .collaborator-weight {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    height: 50vh;
+  }
+
+  .sidebar.collapsed {
+    transform: translateY(calc(100% - 50px));
+  }
+
+  .sidebar.mobile .sidebar-content {
+    height: calc(50vh - 70px);
+    padding: 0.75rem;
+  }
+
+  .sidebar.mobile .sidebar-header {
+    padding: 0.75rem;
+  }
+
+  .sidebar-section h4 {
+    font-size: 0.9rem;
+  }
+
+  .info-label, .info-value {
+    font-size: 0.8rem;
+  }
+
+  .collaboration-dropdown {
+    font-size: 0.8rem;
+  }
+
+  /* Mobile card layout adjustments */
+  .professor-card {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .professor-avatar {
+    width: 45px;
+    height: 45px;
+    font-size: 1.3rem;
+    margin-right: 0.75rem;
+  }
+
+  .professor-details h3 {
+    font-size: 1.1rem;
+  }
+
+  .professor-title {
+    font-size: 0.8rem;
+  }
+
+  .stats-grid {
+    gap: 0.5rem;
+  }
+
+  .stat-card {
+    padding: 0.75rem;
+  }
+
+  .stat-number {
+    font-size: 1.4rem;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+  }
+
+  .collaboration-cards {
+    gap: 0.75rem;
+  }
+
+  .card-header {
+    padding: 0.75rem;
+  }
+
+  .card-icon {
+    width: 35px;
+    height: 35px;
+    font-size: 1.3rem;
+    margin-right: 0.5rem;
+  }
+
+  .card-header h4 {
+    font-size: 1rem;
+  }
+
+  .card-content {
+    padding: 0.875rem;
+  }
+
+  .collaborator-item {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .collaborator-name {
+    font-size: 0.8rem;
+  }
+
+  .collaborator-weight {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    min-width: 30px;
+  }
+
+  .empty-state {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .empty-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .empty-state p {
+    font-size: 0.8rem;
+  }
+
+  .no-selection .placeholder-content {
+    padding: 2rem 1rem;
+  }
+
+  .no-selection .placeholder-icon {
+    font-size: 3rem;
+  }
+
+  .no-selection h4 {
+    font-size: 1.1rem;
+  }
+
+  .no-selection p {
+    font-size: 0.9rem;
+  }
+}

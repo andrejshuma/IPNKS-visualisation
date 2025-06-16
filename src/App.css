@@ -66,3 +66,22 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Mobile responsive layout */
+@media (max-width: 1300px) {
+  .app-body {
+    flex-direction: column;
+    position: relative;
+  }
+
+  .main-content {
+    flex: 1;
+    margin-bottom: 60px; /* Space for collapsed mobile sidebar */
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    margin-bottom: 50px; /* Adjust for smaller mobile sidebar */
+  }
+}
