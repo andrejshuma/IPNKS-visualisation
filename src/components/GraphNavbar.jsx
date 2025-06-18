@@ -273,9 +273,6 @@ const GraphNavbar = () => {
       <div className="mobile-layout">
         {/* Search Card */}
         <div className="control-card search-card">
-          <div className="card-header">
-            <h4>🔍 Пребарај</h4>
-          </div>
           <div className="search-container">
             <input
               type="text"
@@ -348,9 +345,6 @@ const GraphNavbar = () => {
 
         {/* Layout & Controls Card */}
         <div className="control-card layout-card">
-          <div className="card-header">
-            <h4>⚙️ Контроли</h4>
-          </div>
           <div className="layout-buttons">
             <button
               className={`layout-btn ${
@@ -402,9 +396,6 @@ const GraphNavbar = () => {
 
         {/* Stats Card */}
         <div className="control-card stats-card">
-          <div className="card-header">
-            <h4>📊 Статистики</h4>
-          </div>
           <div className="stats-grid">
             <div className="stat">
               <span className="stat-number">{uniquePeople.size}</span>
